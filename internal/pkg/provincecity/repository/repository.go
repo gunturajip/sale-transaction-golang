@@ -23,9 +23,6 @@ type ProviceCityRepositoryImpl struct {
 
 const basepath = "http://www.emsifa.com/api-wilayah-indonesia/api"
 
-// https://emsifa.github.io/api-wilayah-indonesia/api/regencies/11.json
-// https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json
-
 func NewProviceCityRepository(db *gorm.DB) ProviceCityRepository {
 	return &ProviceCityRepositoryImpl{
 		db: db,

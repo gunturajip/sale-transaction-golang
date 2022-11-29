@@ -20,7 +20,7 @@ func HTTPRouteInit(r *fiber.App, containerConf *container.Container) {
 	provincecity.ProvinceCityRoute(provcityAPI, containerConf)
 
 	authAPI := api.Group("/auth")
-	auth.AuthRoute(authAPI)
+	auth.AuthRoute(authAPI, containerConf)
 
 	// userAPI := api.Group("/user")
 	// user.UserRoute(userAPI)

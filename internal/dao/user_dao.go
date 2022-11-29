@@ -19,6 +19,10 @@ type User struct {
 	IDKota       string    `json:"id_kota"`
 	Alamat       []Alamat  `json:"alamat"`
 	// Toko         Toko      `gorm:"-"`
+	// Trx          []Trx     `json:"trx"`
 }
 
-// Trx          []Trx     `json:"trx"`
+type UserLogin struct {
+	KataSandi string `json:"kata_sandi"`
+	NoTelp    string `json:"no_telp" gorm:"unique"`
+}

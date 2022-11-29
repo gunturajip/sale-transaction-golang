@@ -30,7 +30,7 @@ func (pc *ProviceCityControllerImpl) GetListProvince(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, nil, res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, fiber.StatusOK)
 }
 
 func (pc *ProviceCityControllerImpl) GetListCity(ctx *fiber.Ctx) error {
@@ -45,7 +45,7 @@ func (pc *ProviceCityControllerImpl) GetListCity(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, nil, res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, fiber.StatusOK)
 }
 
 func (pc *ProviceCityControllerImpl) GetDetailProvince(ctx *fiber.Ctx) error {
@@ -59,7 +59,7 @@ func (pc *ProviceCityControllerImpl) GetDetailProvince(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, nil, res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, fiber.StatusOK)
 }
 
 func (pc *ProviceCityControllerImpl) GetDetailCity(ctx *fiber.Ctx) error {
@@ -74,5 +74,5 @@ func (pc *ProviceCityControllerImpl) GetDetailCity(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, nil, res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, fiber.StatusOK)
 }
