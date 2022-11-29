@@ -8,6 +8,9 @@ test:
 entermysql:
 	docker exec -it mysql_fiber_gorm_rakamin mysql -u ADMIN -pSECRET rakamin_intern
 
+entermysqlroot:
+	docker exec -it mysql_fiber_gorm_rakamin mysql -u root -pSECRET_ROOT rakamin_intern
+
 runenv:
 	docker compose up -d
 

@@ -18,6 +18,7 @@ type User struct {
 	IDProvinsi   string    `json:"id_provinsi"`
 	IDKota       string    `json:"id_kota"`
 	Alamat       []Alamat  `json:"alamat"`
-	Trx          []Trx     `json:"trx"`
-	// Toko         Toko      `json:"toko"`
+	// Toko         Toko      `gorm:"-"`
 }
+
+// Trx          []Trx     `json:"trx"`

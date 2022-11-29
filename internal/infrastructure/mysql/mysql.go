@@ -58,8 +58,7 @@ func DatabaseInit(v *viper.Viper) *gorm.DB {
 	}
 
 	log.Println("⇨ MySQL status is connected")
-
-	// db.AutoMigrate(&entity.Article{})
+	RunMigration(db)
 
 	return db
 }

@@ -4,11 +4,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type PhotoProduct struct {
-	gorm.Model
-	Product Product `json:"product"`
-}
-
 type Product struct {
 	gorm.Model
 	NamaProduk    string          `json:"nama_produk"`
@@ -17,8 +12,10 @@ type Product struct {
 	HargaKonsumen string          `json:"harga_konsumen"`
 	Stok          int             `json:"stok"`
 	Deskripsi     string          `json:"deskripsi" gorm:"type:text"`
-	Toko          Toko            `json:"toko"`
-	Category      Category        `json:"category"`
+	TokoID        uint            `json:"toko_id" gorm:"not null"`
+	Toko          Toko            `json:"toko"` // foreign key
+	CategoryID    uint            `json:"category_id" gorm:"not null"`
+	Category      Category        `json:"category"` // foreign key
 	Photos        []ProductPhotos `json:"photos"`
 }
 
@@ -29,13 +26,16 @@ type LogProduct struct {
 	HargaReseler  string          `json:"harga_reseler"`
 	HargaKonsumen string          `json:"harga_konsumen"`
 	Deskripsi     string          `json:"deskripsi" gorm:"type:text"`
-	Toko          Toko            `json:"toko"`
-	Category      Category        `json:"category"`
-	Photos        []ProductPhotos `json:"photos"`
+	TokoID        uint            `json:"toko_id" gorm:"not null"`
+	Toko          Toko            `json:"toko"` // foreign key
+	CategoryID    uint            `json:"category_id" gorm:"not null"`
+	Category      Category        `json:"category"` // foreign key
+	Photos        []ProductPhotos `json:"ProductLogID" gorm:"foreignKey:ProductLogID"`
 }
 
 type ProductPhotos struct {
 	gorm.Model
-	Product Product `json:"product"`
-	url     string  `json:"url"`
+	ProductID    uint   `json:"product_id" gorm:"not null"`
+	ProductLogID uint   `json:"product_log_id" gorm:"not null"`
+	Url          string `json:"url"`
 }

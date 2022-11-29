@@ -1,7 +1,7 @@
 package http
 
 import (
-	"tugas_akhir/internal/pkg/user"
+	"tugas_akhir/internal/pkg/auth"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -13,18 +13,21 @@ func HTTPRouteInit(r *fiber.App) {
 		return c.SendString("Hello, World! Route")
 	})
 
-	userAPI := api.Group("/user")
-	user.UserRoute(userAPI)
-	alamatAPI := userAPI.Group("/alamat")
-
-	tokoAPI := api.Group("/toko")
-
-	productAPI := api.Group("/product")
-
-	categoryAPI := api.Group("/category")
-
 	authAPI := api.Group("/auth")
+	auth.AuthRoute(authAPI)
 
-	trxAPI := api.Group("/trx")
+	// userAPI := api.Group("/user")
+	// user.UserRoute(userAPI)
+	// alamatAPI := userAPI.Group("/alamat")
+
+	// tokoAPI := api.Group("/toko")
+
+	// productAPI := api.Group("/product")
+
+	// categoryAPI := api.Group("/category")
+
+	// authAPI := api.Group("/auth")
+
+	// trxAPI := api.Group("/trx")
 
 }

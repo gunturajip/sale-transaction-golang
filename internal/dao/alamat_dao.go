@@ -8,5 +8,5 @@ type Alamat struct {
 	NamaPenerima string `json:"nama_penerima"`
 	NoTelp       string `json:"no_telp"`
 	DetailAlamat string `json:"detail_alamat" gorm:"type:text"`
-	User         User   `json:"user"`
+	UserID       uint   `json:"user_id" gorm:"not null"`
 }
