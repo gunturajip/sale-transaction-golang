@@ -14,11 +14,11 @@ import (
 func main() {
 	fmt.Println("Hello")
 
-	container.InitContainer()
+	containerConf := container.InitContainer()
 	app := fiber.New()
 	app.Use(logger.New())
 
-	rest.HTTPRouteInit(app)
+	rest.HTTPRouteInit(app, containerConf)
 
 	log.Fatal(app.Listen(":8000"))
 }
