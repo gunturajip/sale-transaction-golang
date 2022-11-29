@@ -19,7 +19,8 @@ type User struct {
 	IDKota       string    `json:"id_kota"`
 	Alamat       []Alamat  `json:"alamat"`
 	// Toko         Toko      `gorm:"-"`
-	// Trx          []Trx     `json:"trx"`
+	Trx     []Trx `json:"trx"`
+	IsAdmin bool  `json:"is_admin" gorm:"default:false"`
 }
 
 type UserLogin struct {
