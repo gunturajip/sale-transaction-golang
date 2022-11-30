@@ -24,11 +24,19 @@ func NewAuthRepository(authusecase authusecase.AuthUseCase) AuthUseCase {
 }
 
 func (ar *AuthUseCaseImpl) Login(ctx *fiber.Ctx) error {
-	// if err.Err != nil {
-	// 	return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
-	// }
+	c := ctx.Context()
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", "", fiber.StatusOK)
+	user := new(authdto.LoginRequest)
+	if err := ctx.BodyParser(user); err != nil {
+		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, err.Error(), nil, fiber.StatusBadRequest)
+	}
+
+	res, err := ar.authusecase.LoginUC(c, *user)
+	if err != nil {
+		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, err.Err.Error(), nil, err.Code)
+	}
+
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, fiber.StatusOK)
 }
 
 func (ar *AuthUseCaseImpl) Register(ctx *fiber.Ctx) error {

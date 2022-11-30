@@ -16,4 +16,5 @@ func AuthRoute(r fiber.Router, containerConf *container.Container) {
 	controller := authcontroller.NewAuthRepository(usecase)
 
 	r.Post("/register", controller.Register)
+	r.Post("/login", controller.Login)
 }

@@ -16,7 +16,7 @@ var Validate = validator.New()
 var mysqlErr *mysql.MySQLError
 
 func MysqlCheckErrDuplicateEntry(err error) bool {
-	if errors.As(err, &mysqlErr) && mysqlErr.Number == 1062 {
+	if errors.Is(err, mysqlErr) && mysqlErr.Number == 1062 {
 		return true
 	}
 	return false

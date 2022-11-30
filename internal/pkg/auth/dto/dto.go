@@ -1,14 +1,12 @@
 package authdto
 
-import "time"
-
 type LoginRequest struct {
 	NoTelp   string `json:"no_telp" validate:"required"`
-	Password string `json:"password" validate:"required"`
+	Password string `json:"kata_sandi" validate:"required"`
 }
 
 type RegisterRequest struct {
-	Nama         string `json:"nama" validate:"required"`
+	Nama         string `json:"nama,omitempty" validate:"required"`
 	KataSandi    string `json:"kata_sandi" validate:"required,min=6"`
 	NoTelp       string `json:"no_telp" validate:"required"`
 	TanggalLahir string `json:"tanggal_Lahir" validate:"required"`
@@ -20,14 +18,15 @@ type RegisterRequest struct {
 }
 
 type LoginResp struct {
-	Nama         string    `json:"nama"`
-	NoTelp       string    `json:"no_telp"`
-	TanggalLahir time.Time `json:"tanggal_Lahir" `
-	Tentang      string    `json:"tentang"`
-	Perkerjaan   string    `json:"pekerjaan"`
-	Email        string    `json:"email"`
-	IDProvinsi   string    `json:"id_provinsi"`
-	IDKota       string    `json:"id_kota"`
+	Nama         string `json:"nama,omitempty"`
+	NoTelp       string `json:"no_telp,omitempty"`
+	TanggalLahir string `json:"tanggal_Lahir,omitempty"`
+	Tentang      string `json:"tentang,omitempty"`
+	Perkerjaan   string `json:"pekerjaan,omitempty"`
+	Email        string `json:"email,omitempty"`
+	IDProvinsi   string `json:"id_provinsi,omitempty"`
+	IDKota       string `json:"id_kota,omitempty"`
+	Token        string `json:"token,omitempty"`
 	// Alamat       []Alamat  `json:"alamat"`
 	// Toko         Toko      `gorm:"-"`
 	// Trx          []Trx     `json:"trx"`

@@ -18,6 +18,10 @@ run:
 	docker compose up -d
 	go run app/main.go
 
+commit:
+	git add .
+	git commit -am '${cmt}'
+
 struct:
 	gomodifytags -file ${file} -struct ${struct} -add-tags ${tags}
 
