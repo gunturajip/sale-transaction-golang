@@ -39,5 +39,5 @@ func (tr *TokoRepositoryImpl) CreateToko(ctx context.Context, tx *gorm.DB, data 
 	if res.Error != nil {
 		return 0, err
 	}
-	return data.ID, err
+	return data.ID, res.Error
 }

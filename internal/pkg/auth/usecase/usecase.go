@@ -139,6 +139,7 @@ func (ar *AuthUseCaseImpl) RegisterUC(ctx context.Context, data authdto.Register
 	// CREATE USER
 	tx := ar.db.Begin()
 	resID, errRepo := ar.authrepository.RegisterRepo(ctx, tx, dataRegis)
+	log.Println("errRepo", helper.MysqlCheckErrDuplicateEntry(errRepo))
 	if helper.MysqlCheckErrDuplicateEntry(errRepo) {
 		log.Println(errRepo)
 		tx.Rollback()
@@ -172,7 +173,12 @@ func (ar *AuthUseCaseImpl) RegisterUC(ctx context.Context, data authdto.Register
 		}
 	}
 
-	tx.Commit()
+	if tx.Commit().Error != nil {
+		return "", &helper.ErrorStruct{
+			Code: fiber.StatusBadRequest,
+			Err:  errRepo,
+		}
+	}
 
 	log.Println("Register Succedd")
 	return "Register Succeed", err

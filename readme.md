@@ -26,3 +26,5 @@ FROM
 WHERE
   REFERENCED_TABLE_SCHEMA = 'rakamin_intern' 
 ```
+#### TODO
+[ ] Preload login

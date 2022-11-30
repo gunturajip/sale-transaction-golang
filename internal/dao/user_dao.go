@@ -18,9 +18,9 @@ type User struct {
 	IDProvinsi   string    `json:"id_provinsi"`
 	IDKota       string    `json:"id_kota"`
 	Alamat       []Alamat  `json:"alamat"`
-	// Toko         Toko      `gorm:"-"`
-	Trx     []Trx `json:"trx"`
-	IsAdmin bool  `json:"is_admin" gorm:"default:false"`
+	Toko         Toko      `gorm:"foreignkey:UserID"`
+	Trx          []Trx     `json:"trx"`
+	IsAdmin      bool      `json:"is_admin" gorm:"default:false"`
 }
 
 type UserLogin struct {

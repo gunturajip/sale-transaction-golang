@@ -23,7 +23,7 @@ func NewAuthRepository(db *gorm.DB) AuthRepository {
 }
 
 func (ar *AuthRepositoryImpl) LoginRepo(ctx context.Context, user dao.UserLogin) (data dao.User, err error) {
-	if err := ar.db.First(&data, "no_telp = ?", user.NoTelp).WithContext(ctx).Error; err != nil {
+	if err := ar.db.Debug().Preload("Tokos").First(&data, "no_telp = ?", user.NoTelp).WithContext(ctx).Error; err != nil {
 		return data, err
 	}
 
@@ -33,7 +33,7 @@ func (ar *AuthRepositoryImpl) LoginRepo(ctx context.Context, user dao.UserLogin)
 func (ar *AuthRepositoryImpl) RegisterRepo(ctx context.Context, tx *gorm.DB, user dao.User) (id uint, err error) {
 	result := tx.Create(&user).WithContext(ctx)
 	if result.Error != nil {
-		return id, err
+		return id, result.Error
 	}
 
 	return user.ID, nil
