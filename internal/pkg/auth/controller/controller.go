@@ -17,7 +17,7 @@ type AuthUseCaseImpl struct {
 	authusecase authusecase.AuthUseCase
 }
 
-func NewAuthRepository(authusecase authusecase.AuthUseCase) AuthUseCase {
+func NewAuthUseCase(authusecase authusecase.AuthUseCase) AuthUseCase {
 	return &AuthUseCaseImpl{
 		authusecase: authusecase,
 	}
@@ -36,7 +36,7 @@ func (ar *AuthUseCaseImpl) Login(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDPOSTDATA, "", res, fiber.StatusOK)
 }
 
 func (ar *AuthUseCaseImpl) Register(ctx *fiber.Ctx) error {
@@ -52,5 +52,5 @@ func (ar *AuthUseCaseImpl) Register(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDPOSTDATA, "", res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDPOSTDATA, "", res, fiber.StatusCreated)
 }

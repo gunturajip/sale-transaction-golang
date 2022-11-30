@@ -28,3 +28,5 @@ WHERE
 ```
 #### TODO
 [ ] Preload login
+[ ] Get Toko return product 
+[X] Delete Photo when update data

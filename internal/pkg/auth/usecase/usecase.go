@@ -3,6 +3,7 @@ package authusecase
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -30,7 +31,7 @@ type AuthUseCaseImpl struct {
 	db             *gorm.DB
 }
 
-func NewAuthRepository(authrepository authrepository.AuthRepository, tokorepository tokorepository.TokoRepository, db *gorm.DB) AuthUseCase {
+func NewAuthUseCase(authrepository authrepository.AuthRepository, tokorepository tokorepository.TokoRepository, db *gorm.DB) AuthUseCase {
 	return &AuthUseCaseImpl{
 		authrepository: authrepository,
 		tokorepository: tokorepository,
@@ -66,7 +67,7 @@ func (ar *AuthUseCaseImpl) LoginUC(ctx context.Context, data authdto.LoginReques
 
 	// GENERATE JWT TOKEN
 	claims := jwt.MapClaims{}
-	claims["id"] = resRepo.ID
+	claims["id"] = fmt.Sprint(resRepo.ID)
 	claims["email"] = resRepo.Email
 	claims["exp"] = time.Now().Add(48 * time.Hour).Unix()
 

@@ -15,8 +15,8 @@ import (
 func AuthRoute(r fiber.Router, containerConf *container.Container) {
 	repoToko := tokorepository.NewTokoRepository(containerConf.Mysqldb)
 	repo := authrepository.NewAuthRepository(containerConf.Mysqldb)
-	usecase := authusecase.NewAuthRepository(repo, repoToko, containerConf.Mysqldb)
-	controller := authcontroller.NewAuthRepository(usecase)
+	usecase := authusecase.NewAuthUseCase(repo, repoToko, containerConf.Mysqldb)
+	controller := authcontroller.NewAuthUseCase(usecase)
 
 	r.Post("/register", controller.Register)
 	r.Post("/login", controller.Login)
