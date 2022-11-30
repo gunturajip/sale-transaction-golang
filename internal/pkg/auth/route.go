@@ -8,11 +8,14 @@ import (
 	authcontroller "tugas_akhir/internal/pkg/auth/controller"
 	authrepository "tugas_akhir/internal/pkg/auth/repository"
 	authusecase "tugas_akhir/internal/pkg/auth/usecase"
+
+	tokorepository "tugas_akhir/internal/pkg/toko/repository"
 )
 
 func AuthRoute(r fiber.Router, containerConf *container.Container) {
+	repoToko := tokorepository.NewTokoRepository(containerConf.Mysqldb)
 	repo := authrepository.NewAuthRepository(containerConf.Mysqldb)
-	usecase := authusecase.NewAuthRepository(repo)
+	usecase := authusecase.NewAuthRepository(repo, repoToko, containerConf.Mysqldb)
 	controller := authcontroller.NewAuthRepository(usecase)
 
 	r.Post("/register", controller.Register)

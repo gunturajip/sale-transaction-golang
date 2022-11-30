@@ -9,7 +9,7 @@ import (
 
 type AuthRepository interface {
 	LoginRepo(ctx context.Context, user dao.UserLogin) (data dao.User, err error)
-	RegisterRepo(ctx context.Context, user dao.User) (res string, err error)
+	RegisterRepo(ctx context.Context, tx *gorm.DB, user dao.User) (id uint, err error)
 }
 
 type AuthRepositoryImpl struct {
@@ -30,9 +30,11 @@ func (ar *AuthRepositoryImpl) LoginRepo(ctx context.Context, user dao.UserLogin)
 	return data, nil
 }
 
-func (ar *AuthRepositoryImpl) RegisterRepo(ctx context.Context, user dao.User) (res string, err error) {
-	if err := ar.db.Create(&user).WithContext(ctx).Error; err != nil {
-		return "", err
+func (ar *AuthRepositoryImpl) RegisterRepo(ctx context.Context, tx *gorm.DB, user dao.User) (id uint, err error) {
+	result := tx.Create(&user).WithContext(ctx)
+	if result.Error != nil {
+		return id, err
 	}
-	return "Register Succeed ", nil
+
+	return user.ID, nil
 }

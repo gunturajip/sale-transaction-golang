@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strings"
 	"time"
 	"tugas_akhir/internal/dao"
 	"tugas_akhir/internal/helper"
 	authdto "tugas_akhir/internal/pkg/auth/dto"
 	authrepository "tugas_akhir/internal/pkg/auth/repository"
+	tokorepository "tugas_akhir/internal/pkg/toko/repository"
 
 	"tugas_akhir/internal/utils"
 
@@ -24,12 +26,17 @@ type AuthUseCase interface {
 
 type AuthUseCaseImpl struct {
 	authrepository authrepository.AuthRepository
+	tokorepository tokorepository.TokoRepository
+	db             *gorm.DB
 }
 
-func NewAuthRepository(authrepository authrepository.AuthRepository) AuthUseCase {
+func NewAuthRepository(authrepository authrepository.AuthRepository, tokorepository tokorepository.TokoRepository, db *gorm.DB) AuthUseCase {
 	return &AuthUseCaseImpl{
 		authrepository: authrepository,
+		tokorepository: tokorepository,
+		db:             db,
 	}
+
 }
 
 func (ar *AuthUseCaseImpl) LoginUC(ctx context.Context, data authdto.LoginRequest) (res authdto.LoginResp, err *helper.ErrorStruct) {
@@ -127,9 +134,14 @@ func (ar *AuthUseCaseImpl) RegisterUC(ctx context.Context, data authdto.Register
 		// Alamat:       []dao.Alamat{},
 	}
 
-	res, errRepo := ar.authrepository.RegisterRepo(ctx, dataRegis)
+	// TRANSACTION
+
+	// CREATE USER
+	tx := ar.db.Begin()
+	resID, errRepo := ar.authrepository.RegisterRepo(ctx, tx, dataRegis)
 	if helper.MysqlCheckErrDuplicateEntry(errRepo) {
 		log.Println(errRepo)
+		tx.Rollback()
 		return "", &helper.ErrorStruct{
 			Code: fiber.StatusBadRequest,
 			Err:  errRepo,
@@ -138,12 +150,46 @@ func (ar *AuthUseCaseImpl) RegisterUC(ctx context.Context, data authdto.Register
 
 	if errRepo != nil {
 		log.Println(errRepo)
+		tx.Rollback()
 		return "", &helper.ErrorStruct{
 			Code: fiber.StatusInternalServerError,
 			Err:  errRepo,
 		}
 	}
 
+	// CREATE TOKO
+	dataToko := dao.Toko{
+		NamaToko: ar.createShopName(data.Nama),
+		UserID:   resID,
+	}
+	_, errRepoToko := ar.tokorepository.CreateToko(ctx, tx, dataToko)
+	if errRepoToko != nil {
+		log.Println(errRepoToko)
+		tx.Rollback()
+		return "", &helper.ErrorStruct{
+			Code: fiber.StatusInternalServerError,
+			Err:  errRepo,
+		}
+	}
+
+	tx.Commit()
+
 	log.Println("Register Succedd")
-	return res, err
+	return "Register Succeed", err
+}
+
+func (ar *AuthUseCaseImpl) createShopName(nama string) string {
+	arrStr := strings.Split(nama, " ")
+	var newArrStr []string
+
+	for _, v := range arrStr {
+		if len(v) < 3 {
+			newArrStr = append(newArrStr, v)
+		} else {
+			newArrStr = append(newArrStr, v[0:3])
+		}
+	}
+
+	return strings.Join(newArrStr, "-")
+
 }
