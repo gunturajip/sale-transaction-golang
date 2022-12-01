@@ -74,6 +74,19 @@ func (ar *UserUseCaseImpl) UpdateMyProfile(ctx context.Context, UserID string, d
 		}
 	}
 
+	if data.KataSandi != "" {
+		hashPass, errHash := utils.HashPassword(data.KataSandi)
+		if errHash != nil {
+			log.Println(errHash)
+			return res, &helper.ErrorStruct{
+				Code: fiber.StatusInternalServerError,
+				Err:  errHash,
+			}
+		}
+
+		data.KataSandi = hashPass
+	}
+
 	dataUser := dao.User{
 		Nama:         data.Nama,
 		KataSandi:    data.KataSandi,
