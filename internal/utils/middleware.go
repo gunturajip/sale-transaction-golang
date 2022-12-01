@@ -1,13 +1,15 @@
 package utils
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"tugas_akhir/internal/helper"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 func MiddlewareAuth(ctx *fiber.Ctx) error {
 	token := ctx.Get("token")
 	if token == "" {
-		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "unauthenticated",
-		})
+		return helper.BuildResponse(ctx, false, "UNAUTHORIZED", "UNAUTHORIZED", nil, fiber.StatusUnauthorized)
 	}
 
 	// _, err := utils.VerifyToken(token)

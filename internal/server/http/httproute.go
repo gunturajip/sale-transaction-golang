@@ -3,6 +3,7 @@ package http
 import (
 	"fmt"
 	"tugas_akhir/internal/helper"
+	"tugas_akhir/internal/pkg/alamat"
 	"tugas_akhir/internal/pkg/auth"
 	"tugas_akhir/internal/pkg/category"
 	"tugas_akhir/internal/pkg/provincecity"
@@ -33,7 +34,8 @@ func HTTPRouteInit(r *fiber.App, containerConf *container.Container) {
 	userAPI := api.Group("/user")
 	user.UserRoute(userAPI, containerConf)
 
-	// alamatAPI := userAPI.Group("/alamat")
+	alamatAPI := userAPI.Group("/alamat")
+	alamat.AlamatRoute(alamatAPI, containerConf)
 
 	tokoAPI := api.Group("/toko")
 	toko.TokoRoute(tokoAPI, containerConf)
