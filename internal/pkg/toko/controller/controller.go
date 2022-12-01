@@ -96,7 +96,6 @@ func (tu *TokoUseCaseImpl) UpdateByID(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, err.Error(), nil, fiber.StatusBadRequest)
 	}
 
-	// VALIDATION REQUIRED IMAGE
 	// mengambil context filename
 	var filenameStr string
 	filename := ctx.Locals("filename")

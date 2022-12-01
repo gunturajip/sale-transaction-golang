@@ -64,7 +64,7 @@ func (tr *TokoRepositoryImpl) UpdateByID(ctx context.Context, UserID string, IDT
 		return "Update toko failed", gorm.ErrRecordNotFound
 	}
 
-	// Failed
+	// NEED IMPROV
 	if dataToko.UrlFoto != data.UrlFoto && dataToko.UrlFoto != "" && data.UrlFoto != "" {
 		log.Println("update foto")
 		err := utils.HandleRemoveFile(dataToko.UrlFoto)

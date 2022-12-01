@@ -6,6 +6,7 @@ import (
 	"tugas_akhir/internal/pkg/auth"
 	"tugas_akhir/internal/pkg/provincecity"
 	"tugas_akhir/internal/pkg/toko"
+	"tugas_akhir/internal/pkg/user"
 
 	"tugas_akhir/internal/infrastructure/container"
 
@@ -28,8 +29,9 @@ func HTTPRouteInit(r *fiber.App, containerConf *container.Container) {
 	authAPI := api.Group("/auth")
 	auth.AuthRoute(authAPI, containerConf)
 
-	// userAPI := api.Group("/user")
-	// user.UserRoute(userAPI)
+	userAPI := api.Group("/user")
+	user.UserRoute(userAPI, containerConf)
+
 	// alamatAPI := userAPI.Group("/alamat")
 
 	tokoAPI := api.Group("/toko")
