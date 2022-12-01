@@ -16,7 +16,7 @@ import (
 func UserRoute(r fiber.Router, containerConf *container.Container) {
 	repo := userrepository.NewUserRepository(containerConf.Mysqldb)
 	usecase := userusecase.NewUserUseCase(repo)
-	controller := usercontroller.NewUserUseCase(usecase)
+	controller := usercontroller.NewUserController(usecase)
 
 	r.Get("", utils.MiddlewareAuth, controller.GetMyProfile)
 	r.Put("", utils.MiddlewareAuth, controller.UpdateMyProfile)

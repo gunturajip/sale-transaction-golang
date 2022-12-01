@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"tugas_akhir/internal/helper"
 	"tugas_akhir/internal/pkg/auth"
+	"tugas_akhir/internal/pkg/category"
 	"tugas_akhir/internal/pkg/provincecity"
 	"tugas_akhir/internal/pkg/toko"
 	"tugas_akhir/internal/pkg/user"
@@ -39,7 +40,8 @@ func HTTPRouteInit(r *fiber.App, containerConf *container.Container) {
 
 	// productAPI := api.Group("/product")
 
-	// categoryAPI := api.Group("/category")
+	categoryAPI := api.Group("/category")
+	category.CategoryRoute(categoryAPI, containerConf)
 
 	// authAPI := api.Group("/auth")
 

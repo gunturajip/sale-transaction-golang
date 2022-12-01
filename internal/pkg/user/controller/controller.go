@@ -8,22 +8,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type UserUseCase interface {
+type UserController interface {
 	GetMyProfile(ctx *fiber.Ctx) error
 	UpdateMyProfile(ctx *fiber.Ctx) error
 }
 
-type UserUseCaseImpl struct {
+type UserControllerImpl struct {
 	userusecase userusecase.UserUseCase
 }
 
-func NewUserUseCase(userusecase userusecase.UserUseCase) UserUseCase {
-	return &UserUseCaseImpl{
+func NewUserController(userusecase userusecase.UserUseCase) UserController {
+	return &UserControllerImpl{
 		userusecase: userusecase,
 	}
 }
 
-func (uc *UserUseCaseImpl) GetMyProfile(ctx *fiber.Ctx) error {
+func (uc *UserControllerImpl) GetMyProfile(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
@@ -40,7 +40,7 @@ func (uc *UserUseCaseImpl) GetMyProfile(ctx *fiber.Ctx) error {
 	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, fiber.StatusOK)
 }
 
-func (uc *UserUseCaseImpl) UpdateMyProfile(ctx *fiber.Ctx) error {
+func (uc *UserControllerImpl) UpdateMyProfile(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
