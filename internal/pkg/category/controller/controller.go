@@ -59,20 +59,20 @@ func (uc *CategoryControllerImpl) CreateCategory(ctx *fiber.Ctx) error {
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
 	if useridStr == "" {
-		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, "UNAUTHORIZED", nil, fiber.StatusUnauthorized)
+		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, "UNAUTHORIZED", nil, fiber.StatusUnauthorized)
 	}
 
 	data := new(categorydto.CategoryReq)
 	if err := ctx.BodyParser(data); err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, err.Error(), nil, fiber.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, err.Error(), nil, fiber.StatusBadRequest)
 	}
 
 	res, err := uc.categoryusecase.CreateCategory(c, useridStr, *data)
 	if err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
+		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDPOSTDATA, "", res, fiber.StatusOK)
 }
 
 func (uc *CategoryControllerImpl) UpdateCategoryByID(ctx *fiber.Ctx) error {

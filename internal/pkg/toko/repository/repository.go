@@ -50,9 +50,9 @@ func (tr *TokoRepositoryImpl) GetAll(ctx context.Context, filter tokodto.TokoFil
 		db = db.Where("nama_toko LIKE ?", "%"+filter.Name+"%")
 	}
 
-	page := (filter.Page - 1) * filter.Limit
+	offset := (filter.Page - 1) * filter.Limit
 
-	if err := db.Debug().Limit(filter.Limit).Offset(page).Find(&res).WithContext(ctx).Error; err != nil {
+	if err := db.Debug().Limit(filter.Limit).Offset(offset).Find(&res).WithContext(ctx).Error; err != nil {
 		return nil, err
 	}
 

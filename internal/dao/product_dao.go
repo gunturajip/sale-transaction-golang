@@ -8,8 +8,8 @@ type Product struct {
 	gorm.Model
 	NamaProduk    string          `json:"nama_produk"`
 	Slug          string          `json:"slug"`
-	HargaReseler  string          `json:"harga_reseler"`
-	HargaKonsumen string          `json:"harga_konsumen"`
+	HargaReseler  int             `json:"harga_reseler"`
+	HargaKonsumen int             `json:"harga_konsumen"`
 	Stok          int             `json:"stok"`
 	Deskripsi     string          `json:"deskripsi" gorm:"type:text"`
 	TokoID        uint            `json:"toko_id" gorm:"not null"`
@@ -23,8 +23,8 @@ type LogProduct struct {
 	gorm.Model
 	NamaProduk    string          `json:"nama_produk"`
 	Slug          string          `json:"slug"`
-	HargaReseler  string          `json:"harga_reseler"`
-	HargaKonsumen string          `json:"harga_konsumen"`
+	HargaReseler  int             `json:"harga_reseler"`
+	HargaKonsumen int             `json:"harga_konsumen"`
 	Deskripsi     string          `json:"deskripsi" gorm:"type:text"`
 	TokoID        uint            `json:"toko_id" gorm:"not null"`
 	Toko          Toko            `json:"toko"` // foreign key
