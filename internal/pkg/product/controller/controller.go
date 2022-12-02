@@ -83,6 +83,10 @@ func (uc *ProductControllerImpl) CreateProduct(ctx *fiber.Ctx) error {
 func (uc *ProductControllerImpl) UpdateProductByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	productid := ctx.Params("id_product")
+	if productid == "" {
+		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "PARAM REQUIRED", nil, fiber.StatusBadRequest)
+	}
+
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
 	if useridStr == "" {
@@ -105,6 +109,10 @@ func (uc *ProductControllerImpl) UpdateProductByID(ctx *fiber.Ctx) error {
 func (uc *ProductControllerImpl) DeleteProductByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	productid := ctx.Params("id_product")
+	if productid == "" {
+		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "PARAM REQUIRED", nil, fiber.StatusBadRequest)
+	}
+
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
 	if useridStr == "" {

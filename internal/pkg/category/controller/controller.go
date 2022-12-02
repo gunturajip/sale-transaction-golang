@@ -40,6 +40,10 @@ func (uc *CategoryControllerImpl) GetAllCategories(ctx *fiber.Ctx) error {
 func (uc *CategoryControllerImpl) GetCategoryByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	categoryid := ctx.Params("id_category")
+	if categoryid == "" {
+		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "PARAM REQUIRED", nil, fiber.StatusBadRequest)
+	}
+
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
 	if useridStr == "" {
@@ -78,6 +82,10 @@ func (uc *CategoryControllerImpl) CreateCategory(ctx *fiber.Ctx) error {
 func (uc *CategoryControllerImpl) UpdateCategoryByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	categoryid := ctx.Params("id_category")
+	if categoryid == "" {
+		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "PARAM REQUIRED", nil, fiber.StatusBadRequest)
+	}
+
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
 	if useridStr == "" {
@@ -100,6 +108,10 @@ func (uc *CategoryControllerImpl) UpdateCategoryByID(ctx *fiber.Ctx) error {
 func (uc *CategoryControllerImpl) DeleteCategoryByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	categoryid := ctx.Params("id_category")
+	if categoryid == "" {
+		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "PARAM REQUIRED", nil, fiber.StatusBadRequest)
+	}
+
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
 	if useridStr == "" {

@@ -52,6 +52,10 @@ func (uc *AlamatControllerImpl) GetAllAlamat(ctx *fiber.Ctx) error {
 func (uc *AlamatControllerImpl) GetAlamatByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	alamatid := ctx.Params("id_alamat")
+	if alamatid == "" {
+		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "PARAM REQUIRED", nil, fiber.StatusBadRequest)
+	}
+
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
 	if useridStr == "" {
@@ -90,6 +94,10 @@ func (uc *AlamatControllerImpl) CreateAlamat(ctx *fiber.Ctx) error {
 func (uc *AlamatControllerImpl) UpdateAlamatByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	alamatid := ctx.Params("id_alamat")
+	if alamatid == "" {
+		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "PARAM REQUIRED", nil, fiber.StatusBadRequest)
+	}
+
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
 	if useridStr == "" {
@@ -112,6 +120,10 @@ func (uc *AlamatControllerImpl) UpdateAlamatByID(ctx *fiber.Ctx) error {
 func (uc *AlamatControllerImpl) DeleteAlamatByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	alamatid := ctx.Params("id_alamat")
+	if alamatid == "" {
+		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "PARAM REQUIRED", nil, fiber.StatusBadRequest)
+	}
+
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
 	if useridStr == "" {

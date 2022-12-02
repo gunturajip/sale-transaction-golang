@@ -49,7 +49,7 @@ func (tu *TokoUseCaseImpl) FindByID(ctx *fiber.Ctx) error {
 	tokoid := ctx.Params("id_toko")
 
 	if tokoid == "" {
-		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "INVALID PARAMS", nil, fiber.StatusUnprocessableEntity)
+		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "PARAM REQUIRED", nil, fiber.StatusUnprocessableEntity)
 	}
 
 	res, err := tu.tokousecase.FindByID(c, tokoid)
@@ -83,7 +83,7 @@ func (tu *TokoUseCaseImpl) UpdateByID(ctx *fiber.Ctx) error {
 	userid := ctx.Locals("userid")
 
 	if tokoid == "" {
-		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "INVALID PARAMS", nil, fiber.StatusUnprocessableEntity)
+		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "PARAM REQUIRED", nil, fiber.StatusUnprocessableEntity)
 	}
 
 	useridStr := userid.(string)
