@@ -33,7 +33,11 @@ func NewProductRepository(db *gorm.DB) ProductRepository {
 func (cr *ProductRepositoryImpl) GetAllProducts(ctx context.Context, filter productdto.ProductFilter) (res []dao.Product, err error) {
 	offset := (filter.Page - 1) * filter.Limit
 
-	if err := cr.db.Preload("Photos").Find(&res).WithContext(ctx).Limit(filter.Limit).Offset(offset).Error; err != nil {
+	if filter.NamaProduk != "" {
+		cr.db.Where("nama_produk like ?", "%"+filter.NamaProduk+"%")
+	}
+
+	if err := cr.db.Preload("Photos").Debug().Find(&res).WithContext(ctx).Limit(filter.Limit).Offset(offset).Error; err != nil {
 		return res, err
 	}
 	return res, nil
