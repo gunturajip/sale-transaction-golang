@@ -23,7 +23,7 @@ func CategoryRoute(r fiber.Router, containerConf *container.Container) {
 
 	r.Get("", controller.GetAllProducts)
 	r.Get("/:id_product", controller.GetProductByID)
-	r.Post("", utils.MiddlewareAuth, controller.CreateProduct)
-	r.Put("/:id_product", utils.MiddlewareAuth, controller.UpdateProductByID)
+	r.Post("", utils.MiddlewareAuth, utils.HandleMultiplePartFile, controller.CreateProduct)
+	r.Put("/:id_product", utils.MiddlewareAuth, utils.HandleMultiplePartFile, controller.UpdateProductByID)
 	r.Delete("/:id_product", utils.MiddlewareAuth, controller.DeleteProductByID)
 }

@@ -15,26 +15,24 @@ type ProductFilter struct {
 }
 
 type ProductReqCreate struct {
-	NamaProduk    string `json:"nama_produk" validate:"required"`
-	Slug          string `json:"slug" validate:"required"`
-	HargaReseler  int    `json:"harga_reseler" validate:"required,numeric"`
-	HargaKonsumen int    `json:"harga_konsumen" validate:"required,numeric"`
-	Stok          int    `json:"stok" validate:"required,numeric"`
-	Deskripsi     string `json:"deskripsi" validate:"required"`
+	NamaProduk    string `form:"nama_produk" json:"nama_produk" validate:"required"`
+	HargaReseler  int    `form:"harga_reseller" json:"harga_reseller" validate:"required,numeric"`
+	HargaKonsumen int    `form:"harga_konsumen" json:"harga_konsumen" validate:"required,numeric"`
+	Stok          int    `form:"stok" json:"stok" validate:"required,numeric"`
+	Deskripsi     string `form:"deskripsi" json:"deskripsi" validate:"required"`
 	// TokoID        uint   `json:"toko_id" validate:"required,numeric"`
-	CategoryID uint `json:"category_id" validate:"required,numeric"`
+	CategoryID uint `form:"category_id" json:"category_id" validate:"required,numeric"`
 	// Photos        []ProductPhotos `json:"photos"`
 }
 
 type ProductReqUpdate struct {
-	NamaProduk    string `json:"nama_produk"`
-	Slug          string `json:"slug"`
-	HargaReseler  int    `json:"harga_reseler"`
-	HargaKonsumen int    `json:"harga_konsumen"`
-	Stok          int    `json:"stok"`
-	Deskripsi     string `json:"deskripsi"`
+	NamaProduk    string `form:"nama_produk" json:"nama_produk"`
+	HargaReseler  int    `form:"harga_reseller" json:"harga_reseller"`
+	HargaKonsumen int    `form:"harga_konsumen" json:"harga_konsumen"`
+	Stok          int    `form:"stok" json:"stok"`
+	Deskripsi     string `form:"deskripsi" json:"deskripsi"`
 	// TokoID        uint   `json:"toko_id"`
-	CategoryID uint `json:"category_id"`
+	CategoryID uint `form:"category_id" json:"category_id"`
 	// Photos        []ProductPhotos `json:"photos"`
 }
 

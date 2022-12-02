@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strconv"
 	"strings"
 	"tugas_akhir/internal/dao"
 	"tugas_akhir/internal/helper"
@@ -18,8 +19,8 @@ import (
 type ProductUseCase interface {
 	GetAllProducts(ctx context.Context, filter productdto.ProductFilter) (res []productdto.ProductResp, err *helper.ErrorStruct)
 	GetProductByID(ctx context.Context, productid string) (res productdto.ProductResp, err *helper.ErrorStruct)
-	CreateProduct(ctx context.Context, userid string, data productdto.ProductReqCreate) (res uint, err *helper.ErrorStruct)
-	UpdateProductByID(ctx context.Context, productid, userid string, data productdto.ProductReqUpdate) (res string, err *helper.ErrorStruct)
+	CreateProduct(ctx context.Context, userid string, data productdto.ProductReqCreate, photos []string) (res uint, err *helper.ErrorStruct)
+	UpdateProductByID(ctx context.Context, productid, userid string, data productdto.ProductReqUpdate, photos []string) (res string, err *helper.ErrorStruct)
 	DeleteProductByID(ctx context.Context, productid, userid string) (res string, err *helper.ErrorStruct)
 }
 
@@ -125,7 +126,7 @@ func (pu *ProductUseCaseImpl) GetProductByID(ctx context.Context, productid stri
 
 	return res, nil
 }
-func (pu *ProductUseCaseImpl) CreateProduct(ctx context.Context, userid string, data productdto.ProductReqCreate) (res uint, err *helper.ErrorStruct) {
+func (pu *ProductUseCaseImpl) CreateProduct(ctx context.Context, userid string, data productdto.ProductReqCreate, photos []string) (res uint, err *helper.ErrorStruct) {
 	if errValidate := helper.Validate.Struct(data); errValidate != nil {
 		log.Println(errValidate)
 		return res, &helper.ErrorStruct{
@@ -155,7 +156,12 @@ func (pu *ProductUseCaseImpl) CreateProduct(ctx context.Context, userid string, 
 		Deskripsi:     data.Deskripsi,
 		CategoryID:    data.CategoryID,
 		TokoID:        tokoid,
-		// Photos:        []dao.ProductPhotos{},
+	}
+
+	for _, v := range photos {
+		dataProduct.Photos = append(dataProduct.Photos, &dao.ProductPhotos{
+			Url: v,
+		})
 	}
 
 	resRepo, errRepo := pu.productrepository.CreateProduct(ctx, dataProduct)
@@ -170,7 +176,7 @@ func (pu *ProductUseCaseImpl) CreateProduct(ctx context.Context, userid string, 
 
 	return resRepo, nil
 }
-func (pu *ProductUseCaseImpl) UpdateProductByID(ctx context.Context, productid, userid string, data productdto.ProductReqUpdate) (res string, err *helper.ErrorStruct) {
+func (pu *ProductUseCaseImpl) UpdateProductByID(ctx context.Context, productid, userid string, data productdto.ProductReqUpdate, photos []string) (res string, err *helper.ErrorStruct) {
 	if errValidate := helper.Validate.Struct(data); errValidate != nil {
 		log.Println(errValidate)
 		return res, &helper.ErrorStruct{
@@ -203,10 +209,26 @@ func (pu *ProductUseCaseImpl) UpdateProductByID(ctx context.Context, productid, 
 		Deskripsi:     data.Deskripsi,
 		TokoID:        tokoid,
 		CategoryID:    data.CategoryID,
-		// Photos:        []dao.ProductPhotos{},
 	}
 
-	resRepo, errRepo := pu.productrepository.UpdateProductByID(ctx, productid, dataProduct)
+	var photosProducts []dao.ProductPhotos
+	for _, v := range photos {
+		productIDUint, errStrconv := strconv.ParseUint(productid, 10, 64)
+		if errStrconv != nil {
+			log.Println(errStrconv)
+			return res, &helper.ErrorStruct{
+				Err:  errStrconv,
+				Code: fiber.StatusBadRequest,
+			}
+		}
+
+		photosProducts = append(photosProducts, dao.ProductPhotos{
+			ProductID: uint(productIDUint),
+			Url:       v,
+		})
+	}
+
+	resRepo, errRepo := pu.productrepository.UpdateProductByID(ctx, productid, dataProduct, photosProducts)
 
 	if errRepo != nil {
 		log.Println(errRepo)

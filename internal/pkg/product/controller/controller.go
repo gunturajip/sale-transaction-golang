@@ -1,6 +1,7 @@
 package productcontroller
 
 import (
+	"fmt"
 	"log"
 	"tugas_akhir/internal/helper"
 	productdto "tugas_akhir/internal/pkg/product/dto"
@@ -67,12 +68,26 @@ func (uc *ProductControllerImpl) CreateProduct(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, "UNAUTHORIZED", nil, fiber.StatusUnauthorized)
 	}
 
+	// VALIDATION REQUIRED IMAGE
+	// mengambil context filename
+	var filenamesData []string
+	filenames := ctx.Locals("filenames")
+	if filenames == nil {
+		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, "photos product is required", nil, fiber.StatusBadRequest)
+	} else {
+		filenamesData = filenames.([]string)
+	}
+
+	if len(filenamesData) < 1 {
+		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, "photos product is required", nil, fiber.StatusBadRequest)
+	}
+
 	data := new(productdto.ProductReqCreate)
 	if err := ctx.BodyParser(data); err != nil {
 		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, err.Error(), nil, fiber.StatusBadRequest)
 	}
 
-	res, err := uc.productusecase.CreateProduct(c, useridStr, *data)
+	res, err := uc.productusecase.CreateProduct(c, useridStr, *data, filenamesData)
 	if err != nil {
 		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, err.Err.Error(), nil, err.Code)
 	}
@@ -93,12 +108,24 @@ func (uc *ProductControllerImpl) UpdateProductByID(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, "UNAUTHORIZED", nil, fiber.StatusUnauthorized)
 	}
 
+	// VALIDATION REQUIRED IMAGE
+	// mengambil context filename
+	var filenamesData []string
+	filenames := ctx.Locals("filenames")
+	if filenames == nil {
+		log.Println("no image uploaded")
+	} else {
+		filenamesData = filenames.([]string)
+	}
+
+	fmt.Println("filenamesData", filenamesData)
+
 	data := new(productdto.ProductReqUpdate)
 	if err := ctx.BodyParser(data); err != nil {
 		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, err.Error(), nil, fiber.StatusBadRequest)
 	}
 
-	res, err := uc.productusecase.UpdateProductByID(c, productid, useridStr, *data)
+	res, err := uc.productusecase.UpdateProductByID(c, productid, useridStr, *data, filenamesData)
 	if err != nil {
 		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
 	}
