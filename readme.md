@@ -30,4 +30,4 @@ WHERE
 [ ] Preload login
 [ ] Get Toko return product 
 [X] Delete Photo when update data
-[ ] Update photo not always delete old photo
+[ ] Pagination total document

@@ -33,18 +33,33 @@ func NewProductRepository(db *gorm.DB) ProductRepository {
 func (cr *ProductRepositoryImpl) GetAllProducts(ctx context.Context, filter productdto.ProductFilter) (res []dao.Product, err error) {
 	offset := (filter.Page - 1) * filter.Limit
 
+	db := cr.db
 	if filter.NamaProduk != "" {
-		cr.db.Where("nama_produk like ?", "%"+filter.NamaProduk+"%")
+		db = db.Where("nama_produk like ?", "%"+filter.NamaProduk+"%")
 	}
 
-	if err := cr.db.Preload("Photos").Debug().Find(&res).WithContext(ctx).Limit(filter.Limit).Offset(offset).Error; err != nil {
+	if filter.MaxHarga > 0 && filter.MinHarga > 0 {
+		fmt.Println("filter.MaxHarga", filter.MaxHarga)
+		fmt.Println("filter.MinHarga", filter.MinHarga)
+		db = db.Where("harga_konsumen > ? AND harga_konsumen < ?", filter.MinHarga, filter.MaxHarga)
+	}
+
+	if filter.TokoID != 0 {
+		db = db.Where("toko_id = ?", filter.TokoID)
+	}
+
+	if filter.CategoryID != 0 {
+		db = db.Where("category_id = ?", filter.CategoryID)
+	}
+
+	if err := db.Debug().Preload("Photos").Debug().WithContext(ctx).Limit(filter.Limit).Offset(offset).Find(&res).Error; err != nil {
 		return res, err
 	}
 	return res, nil
 }
 
 func (cr *ProductRepositoryImpl) GetProductByID(ctx context.Context, productid string) (res dao.Product, err error) {
-	if err := cr.db.Preload("Photos").First(&res, productid).WithContext(ctx).Error; err != nil {
+	if err := cr.db.Debug().Preload("Photos").First(&res, productid).WithContext(ctx).Error; err != nil {
 		return res, err
 	}
 	return res, nil

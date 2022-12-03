@@ -1,17 +1,13 @@
 package productdto
 
 type ProductFilter struct {
-	Limit         int    `query:"limit"`
-	Page          int    `query:"page"`
-	NamaProduk    string `query:"nama_produk"`
-	Slug          string `query:"slug"`
-	HargaReseler  int    `query:"harga_reseler"`
-	HargaKonsumen int    `query:"harga_konsumen"`
-	Stok          int    `query:"stok"`
-	Deskripsi     string `query:"deskripsi"`
-	TokoID        uint   `query:"toko_id"`
-	CategoryID    uint   `query:"category_id"`
-	// Photos        []ProductPhotos `json:"photos"`
+	Limit      int    `query:"limit"`
+	Page       int    `query:"page"`
+	NamaProduk string `query:"nama_produk"`
+	MaxHarga   int    `query:"max_harga"`
+	MinHarga   int    `query:"min_harga"`
+	TokoID     uint   `query:"toko_id"`
+	CategoryID uint   `query:"category_id"`
 }
 
 type ProductReqCreate struct {
@@ -56,4 +52,10 @@ type ProductResp struct {
 	CategoryID uint `json:"category_id" gorm:"not null"`
 	// Category      Category        `json:"category"` // foreign key
 	Photos []ProductPhotos `json:"photos"`
+}
+
+type ProductRespPagination struct {
+	Data  []ProductResp `json:"data"`
+	Page  int           `json:"page"`
+	Limit int           `json:"limit"`
 }

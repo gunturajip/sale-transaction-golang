@@ -17,7 +17,7 @@ import (
 )
 
 type ProductUseCase interface {
-	GetAllProducts(ctx context.Context, filter productdto.ProductFilter) (res []productdto.ProductResp, err *helper.ErrorStruct)
+	GetAllProducts(ctx context.Context, filter productdto.ProductFilter) (res productdto.ProductRespPagination, err *helper.ErrorStruct)
 	GetProductByID(ctx context.Context, productid string) (res productdto.ProductResp, err *helper.ErrorStruct)
 	CreateProduct(ctx context.Context, userid string, data productdto.ProductReqCreate, photos []string) (res uint, err *helper.ErrorStruct)
 	UpdateProductByID(ctx context.Context, productid, userid string, data productdto.ProductReqUpdate, photos []string) (res string, err *helper.ErrorStruct)
@@ -37,12 +37,35 @@ func NewProductUseCase(productrepository productrepository.ProductRepository, to
 
 }
 
-func (pu *ProductUseCaseImpl) GetAllProducts(ctx context.Context, filter productdto.ProductFilter) (res []productdto.ProductResp, err *helper.ErrorStruct) {
+func (pu *ProductUseCaseImpl) GetAllProducts(ctx context.Context, filter productdto.ProductFilter) (res productdto.ProductRespPagination, err *helper.ErrorStruct) {
 	if filter.Limit == 0 {
 		filter.Limit = 10
 	}
 	if filter.Page == 0 {
 		filter.Page = 1
+	}
+
+	if filter.MaxHarga > 0 || filter.MinHarga > 0 {
+		if filter.MinHarga < 1 {
+			return res, &helper.ErrorStruct{
+				Code: fiber.StatusBadRequest,
+				Err:  errors.New("PLEASE INPUT MIN HARGA"),
+			}
+		}
+
+		if filter.MaxHarga < 1 {
+			return res, &helper.ErrorStruct{
+				Code: fiber.StatusBadRequest,
+				Err:  errors.New("PLEASE INPUT MAX HARGA"),
+			}
+		}
+
+		if filter.MinHarga > filter.MaxHarga {
+			return res, &helper.ErrorStruct{
+				Code: fiber.StatusBadRequest,
+				Err:  errors.New("MAX HARGA MUST BE GREATER THAN MIN HARGA"),
+			}
+		}
 	}
 
 	resRepo, errRepo := pu.productrepository.GetAllProducts(ctx, filter)
@@ -82,8 +105,11 @@ func (pu *ProductUseCaseImpl) GetAllProducts(ctx context.Context, filter product
 			})
 		}
 
-		res = append(res, result)
+		res.Data = append(res.Data, result)
 	}
+
+	res.Limit = filter.Limit
+	res.Page = filter.Page
 
 	return res, nil
 }
