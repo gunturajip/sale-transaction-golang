@@ -9,6 +9,7 @@ import (
 	"tugas_akhir/internal/pkg/product"
 	"tugas_akhir/internal/pkg/provincecity"
 	"tugas_akhir/internal/pkg/toko"
+	"tugas_akhir/internal/pkg/trx"
 	"tugas_akhir/internal/pkg/user"
 
 	"tugas_akhir/internal/infrastructure/container"
@@ -42,11 +43,12 @@ func HTTPRouteInit(r *fiber.App, containerConf *container.Container) {
 	toko.TokoRoute(tokoAPI, containerConf)
 
 	productAPI := api.Group("/product")
-	product.CategoryRoute(productAPI, containerConf)
+	product.ProductRoute(productAPI, containerConf)
 
 	categoryAPI := api.Group("/category")
 	category.CategoryRoute(categoryAPI, containerConf)
 
-	// trxAPI := api.Group("/trx")
+	trxAPI := api.Group("/trx")
+	trx.TrxRoute(trxAPI, containerConf)
 
 }

@@ -2,6 +2,7 @@ package productrepository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"tugas_akhir/internal/dao"
@@ -17,6 +18,10 @@ type ProductRepository interface {
 	CreateProduct(ctx context.Context, data dao.Product) (res uint, err error)
 	UpdateProductByID(ctx context.Context, productid string, data dao.Product, photos []dao.ProductPhotos) (res string, err error)
 	DeleteProductByID(ctx context.Context, productid string, tokoid uint) (res string, err error)
+
+	GetProductsBySliceID(ctx context.Context, tx *gorm.DB, sliceid []uint) (res []dao.ProductTotalPrice, err error)
+	CreateProductLog(ctx context.Context, tx *gorm.DB, data []dao.LogProduct) (res []dao.LogProduct, err error)
+	UpdateProductStock(ctx context.Context, tx *gorm.DB, productid uint, qty int) (res string, err error)
 }
 
 type ProductRepositoryImpl struct {
@@ -52,14 +57,14 @@ func (cr *ProductRepositoryImpl) GetAllProducts(ctx context.Context, filter prod
 		db = db.Where("category_id = ?", filter.CategoryID)
 	}
 
-	if err := db.Debug().Preload("Photos").Debug().WithContext(ctx).Limit(filter.Limit).Offset(offset).Find(&res).Error; err != nil {
+	if err := db.Debug().Preload("Category").Preload("Toko").Preload("Photos").WithContext(ctx).Limit(filter.Limit).Offset(offset).Find(&res).Error; err != nil {
 		return res, err
 	}
 	return res, nil
 }
 
 func (cr *ProductRepositoryImpl) GetProductByID(ctx context.Context, productid string) (res dao.Product, err error) {
-	if err := cr.db.Debug().Preload("Photos").First(&res, productid).WithContext(ctx).Error; err != nil {
+	if err := cr.db.Debug().Preload("Category").Preload("Toko").Preload("Photos").First(&res, productid).WithContext(ctx).Error; err != nil {
 		return res, err
 	}
 	return res, nil
@@ -163,4 +168,47 @@ func (cr *ProductRepositoryImpl) DeleteProductByID(ctx context.Context, producti
 	tx.Commit()
 
 	return res, nil
+}
+
+// /
+func (cr *ProductRepositoryImpl) GetProductsBySliceID(ctx context.Context, tx *gorm.DB, sliceid []uint) (res []dao.ProductTotalPrice, err error) {
+	db := tx
+
+	if len(sliceid) > 0 {
+		db = db.Where("id IN ?", sliceid)
+	}
+
+	if err := db.Debug().Preload("Category").Preload("Toko").Preload("Photos").WithContext(ctx).Find(&res).Error; err != nil {
+		tx.Rollback()
+		return res, err
+	}
+	return res, nil
+}
+func (cr *ProductRepositoryImpl) CreateProductLog(ctx context.Context, tx *gorm.DB, data []dao.LogProduct) (res []dao.LogProduct, err error) {
+	result := tx.Create(&data).WithContext(ctx)
+	if result.Error != nil {
+		return res, result.Error
+	}
+
+	return data, nil
+}
+
+func (cr *ProductRepositoryImpl) UpdateProductStock(ctx context.Context, tx *gorm.DB, productid uint, qty int) (res string, err error) {
+	var dataProd dao.Product
+	if err := tx.Debug().First(&dataProd, productid).WithContext(ctx).Error; err != nil {
+		return "", err
+	}
+
+	if dataProd.Stok < qty {
+		log.Println("exceed stok product id ", dataProd.ID)
+		return "", errors.New(fmt.Sprint("exceed stok product id", dataProd.ID))
+	}
+
+	if err := tx.Debug().Model(&dataProd).Where("id = ?", productid).Update("stok", dataProd.Stok-qty).WithContext(ctx).Error; err != nil {
+		log.Println("Update product failed", err, " product id : ", productid)
+		return "", errors.New("Update product failed")
+	}
+
+	log.Println("sukes update product stok, id product : ", dataProd.ID)
+	return "sukes update product stok", nil
 }

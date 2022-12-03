@@ -13,28 +13,40 @@ type Product struct {
 	Stok          int              `json:"stok"`
 	Deskripsi     string           `json:"deskripsi" gorm:"type:text"`
 	TokoID        uint             `json:"toko_id" gorm:"not null"`
-	Toko          Toko             `json:"toko"` // foreign key
+	Toko          *Toko            `json:"toko"` // foreign key
 	CategoryID    uint             `json:"category_id" gorm:"not null"`
-	Category      Category         `json:"category"` // foreign key
+	Category      *Category        `json:"category"` // foreign key
 	Photos        []*ProductPhotos `json:"photos" gorm:"foreignKey:ProductID;"`
 }
 
 type LogProduct struct {
 	gorm.Model
-	ProductID     uint     `json:"product_id" gorm:"not null"`
-	NamaProduk    string   `json:"nama_produk"`
-	Slug          string   `json:"slug"`
-	HargaReseler  int      `json:"harga_reseller"`
-	HargaKonsumen int      `json:"harga_konsumen"`
-	Deskripsi     string   `json:"deskripsi" gorm:"type:text"`
-	TokoID        uint     `json:"toko_id" gorm:"not null"`
-	Toko          Toko     `json:"toko"` // foreign key
-	CategoryID    uint     `json:"category_id" gorm:"not null"`
-	Category      Category `json:"category"` // foreign key
+	ProductID     uint      `json:"product_id" gorm:"not null"`
+	NamaProduk    string    `json:"nama_produk"`
+	Slug          string    `json:"slug"`
+	HargaReseler  int       `json:"harga_reseller"`
+	HargaKonsumen int       `json:"harga_konsumen"`
+	Deskripsi     string    `json:"deskripsi" gorm:"type:text"`
+	TokoID        uint      `json:"toko_id" gorm:"not null"`
+	Toko          *Toko     `json:"toko"` // foreign key
+	CategoryID    uint      `json:"category_id" gorm:"not null"`
+	Category      *Category `json:"category"` // foreign key
 }
 
 type ProductPhotos struct {
 	gorm.Model
 	ProductID uint   `json:"product_id" gorm:"not null"`
 	Url       string `json:"url"`
+}
+
+type ProductTotalPrice struct {
+	Product
+	Totalprice   int `gorm:"-"`
+	Qty          int `gorm:"-"`
+	LogProductID int `gorm:"-"`
+}
+
+// TableName overrides the table name used by UserResponse to `users`
+func (ProductTotalPrice) TableName() string {
+	return "products"
 }

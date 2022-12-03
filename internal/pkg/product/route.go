@@ -15,7 +15,7 @@ import (
 	productusecase "tugas_akhir/internal/pkg/product/usecase"
 )
 
-func CategoryRoute(r fiber.Router, containerConf *container.Container) {
+func ProductRoute(r fiber.Router, containerConf *container.Container) {
 	repo := productrepository.NewProductRepository(containerConf.Mysqldb)
 	tokoRepo := tokorepository.NewTokoRepository(containerConf.Mysqldb)
 	usecase := productusecase.NewProductUseCase(repo, tokoRepo)

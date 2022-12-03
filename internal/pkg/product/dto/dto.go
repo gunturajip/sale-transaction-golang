@@ -1,5 +1,10 @@
 package productdto
 
+import (
+	categorydto "tugas_akhir/internal/pkg/category/dto"
+	tokodto "tugas_akhir/internal/pkg/toko/dto"
+)
+
 type ProductFilter struct {
 	Limit      int    `query:"limit"`
 	Page       int    `query:"page"`
@@ -40,18 +45,16 @@ type ProductPhotos struct {
 }
 
 type ProductResp struct {
-	ID            uint   `json:"id"`
-	NamaProduk    string `json:"nama_produk"`
-	Slug          string `json:"slug"`
-	HargaReseler  int    `json:"harga_reseler"`
-	HargaKonsumen int    `json:"harga_konsumen"`
-	Stok          int    `json:"stok"`
-	Deskripsi     string `json:"deskripsi" gorm:"type:text"`
-	TokoID        uint   `json:"toko_id" gorm:"not null"`
-	// Toko          Toko            `json:"toko"` // foreign key
-	CategoryID uint `json:"category_id" gorm:"not null"`
-	// Category      Category        `json:"category"` // foreign key
-	Photos []ProductPhotos `json:"photos"`
+	ID            uint                     `json:"id"`
+	NamaProduk    string                   `json:"nama_produk"`
+	Slug          string                   `json:"slug"`
+	HargaReseler  int                      `json:"harga_reseler"`
+	HargaKonsumen int                      `json:"harga_konsumen"`
+	Stok          int                      `json:"stok"`
+	Deskripsi     string                   `json:"deskripsi" gorm:"type:text"`
+	Toko          tokodto.TokoResp         `json:"toko"`     // foreign key
+	Category      categorydto.CategoryResp `json:"category"` // foreign key
+	Photos        []ProductPhotos          `json:"photos"`
 }
 
 type ProductRespPagination struct {

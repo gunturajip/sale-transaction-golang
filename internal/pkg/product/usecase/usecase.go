@@ -8,8 +8,10 @@ import (
 	"strings"
 	"tugas_akhir/internal/dao"
 	"tugas_akhir/internal/helper"
+	categorydto "tugas_akhir/internal/pkg/category/dto"
 	productdto "tugas_akhir/internal/pkg/product/dto"
 	productrepository "tugas_akhir/internal/pkg/product/repository"
+	tokodto "tugas_akhir/internal/pkg/toko/dto"
 	tokorepository "tugas_akhir/internal/pkg/toko/repository"
 
 	"github.com/gofiber/fiber/v2"
@@ -93,8 +95,15 @@ func (pu *ProductUseCaseImpl) GetAllProducts(ctx context.Context, filter product
 			HargaKonsumen: v.HargaKonsumen,
 			Stok:          v.Stok,
 			Deskripsi:     v.Deskripsi,
-			TokoID:        v.TokoID,
-			CategoryID:    v.CategoryID,
+			Toko: tokodto.TokoResp{
+				ID:       v.TokoID,
+				NamaToko: v.Toko.NamaToko,
+				UrlFoto:  v.Toko.UrlFoto,
+			},
+			Category: categorydto.CategoryResp{
+				ID:           v.Category.ID,
+				NamaKategori: v.Category.NamaKategori,
+			},
 		}
 
 		for _, photo := range v.Photos {
@@ -138,8 +147,15 @@ func (pu *ProductUseCaseImpl) GetProductByID(ctx context.Context, productid stri
 		HargaKonsumen: resRepo.HargaKonsumen,
 		Stok:          resRepo.Stok,
 		Deskripsi:     resRepo.Deskripsi,
-		TokoID:        resRepo.TokoID,
-		CategoryID:    resRepo.CategoryID,
+		Toko: tokodto.TokoResp{
+			ID:       resRepo.TokoID,
+			NamaToko: resRepo.Toko.NamaToko,
+			UrlFoto:  resRepo.Toko.UrlFoto,
+		},
+		Category: categorydto.CategoryResp{
+			ID:           resRepo.Category.ID,
+			NamaKategori: resRepo.Category.NamaKategori,
+		},
 	}
 
 	for _, photo := range resRepo.Photos {
