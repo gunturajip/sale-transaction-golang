@@ -1,5 +1,7 @@
 package userdto
 
+import "tugas_akhir/internal/dao"
+
 type UserUpdateReq struct {
 	Nama         string `json:"nama,omitempty"`
 	KataSandi    string `json:"kata_sandi,omitempty" validate:"required,min=6"`
@@ -13,15 +15,15 @@ type UserUpdateReq struct {
 }
 
 type UserResp struct {
-	ID           uint   `json:"id"`
-	Nama         string `json:"nama"`
-	NoTelp       string `json:"no_telp"`
-	TanggalLahir string `json:"tanggal_Lahir"`
-	Tentang      string `json:"tentang"`
-	Perkerjaan   string `json:"pekerjaan"`
-	Email        string `json:"email"`
-	IDProvinsi   string `json:"id_provinsi"`
-	IDKota       string `json:"id_kota"`
+	ID           uint         `json:"id"`
+	Nama         string       `json:"nama"`
+	NoTelp       string       `json:"no_telp"`
+	TanggalLahir string       `json:"tanggal_Lahir"`
+	Tentang      string       `json:"tentang"`
+	Perkerjaan   string       `json:"pekerjaan"`
+	Email        string       `json:"email"`
+	IDProvinsi   dao.Province `json:"id_provinsi"`
+	IDKota       dao.City     `json:"id_kota"`
 	// Alamat       []Alamat  `json:"alamat"`
 	// Toko         Toko      `gorm:"-"`
 	// Trx          []Trx     `json:"trx"`

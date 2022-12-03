@@ -23,7 +23,7 @@ func NewAuthRepository(db *gorm.DB) AuthRepository {
 }
 
 func (ar *AuthRepositoryImpl) LoginRepo(ctx context.Context, user dao.UserLogin) (data dao.User, err error) {
-	if err := ar.db.Debug().Preload("Tokos").First(&data, "no_telp = ?", user.NoTelp).WithContext(ctx).Error; err != nil {
+	if err := ar.db.Debug().Preload("Toko").First(&data, "no_telp = ?", user.NoTelp).WithContext(ctx).Error; err != nil {
 		return data, err
 	}
 

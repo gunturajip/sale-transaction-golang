@@ -26,8 +26,3 @@ FROM
 WHERE
   REFERENCED_TABLE_SCHEMA = 'rakamin_intern' 
 ```
-#### TODO
-[ ] Preload login
-[ ] Get Toko return product 
-[X] Delete Photo when update data
-[ ] Pagination total document

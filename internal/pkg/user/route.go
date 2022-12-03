@@ -6,8 +6,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
+	provincecityrepository "tugas_akhir/internal/pkg/provincecity/repository"
 	usercontroller "tugas_akhir/internal/pkg/user/controller"
-
 	userrepository "tugas_akhir/internal/pkg/user/repository"
 
 	userusecase "tugas_akhir/internal/pkg/user/usecase"
@@ -15,7 +15,8 @@ import (
 
 func UserRoute(r fiber.Router, containerConf *container.Container) {
 	repo := userrepository.NewUserRepository(containerConf.Mysqldb)
-	usecase := userusecase.NewUserUseCase(repo)
+	repoProv := provincecityrepository.NewProviceCityRepository(containerConf.Mysqldb)
+	usecase := userusecase.NewUserUseCase(repo, repoProv)
 	controller := usercontroller.NewUserController(usecase)
 
 	r.Get("", utils.MiddlewareAuth, controller.GetMyProfile)

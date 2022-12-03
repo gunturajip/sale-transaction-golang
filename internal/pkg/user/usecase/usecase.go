@@ -6,9 +6,11 @@ import (
 	"log"
 	"tugas_akhir/internal/dao"
 	"tugas_akhir/internal/helper"
+	"tugas_akhir/internal/utils"
+
+	provincecityrepository "tugas_akhir/internal/pkg/provincecity/repository"
 	userdto "tugas_akhir/internal/pkg/user/dto"
 	userrepository "tugas_akhir/internal/pkg/user/repository"
-	"tugas_akhir/internal/utils"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -17,16 +19,17 @@ import (
 type UserUseCase interface {
 	MyProfile(ctx context.Context, UserID string) (res userdto.UserResp, err *helper.ErrorStruct)
 	UpdateMyProfile(ctx context.Context, UserID string, data userdto.UserUpdateReq) (res string, err *helper.ErrorStruct)
-	// CreateUser(ctx context.Context, tx *gorm.DB, data dao.User) (id uint,err *helper.ErrorStruct)
 }
 
 type UserUseCaseImpl struct {
-	userrepository userrepository.UserRepository
+	userrepository         userrepository.UserRepository
+	provincecityrepository provincecityrepository.ProviceCityRepository
 }
 
-func NewUserUseCase(userrepository userrepository.UserRepository) UserUseCase {
+func NewUserUseCase(userrepository userrepository.UserRepository, provincecityrepository provincecityrepository.ProviceCityRepository) UserUseCase {
 	return &UserUseCaseImpl{
-		userrepository: userrepository,
+		userrepository:         userrepository,
+		provincecityrepository: provincecityrepository,
 	}
 
 }
@@ -48,6 +51,18 @@ func (ar *UserUseCaseImpl) MyProfile(ctx context.Context, UserID string) (res us
 		}
 	}
 
+	// GET DATA PROVINCE
+	resProvince, errProvince := ar.provincecityrepository.GetDetailProvince(resRepo.IDProvinsi)
+	if err != nil {
+		log.Println("get province", errProvince)
+	}
+
+	// GET DATA CITY
+	resCity, errCity := ar.provincecityrepository.GetDetailCity(resRepo.IDKota)
+	if err != nil {
+		log.Println("err get city", errCity)
+	}
+
 	res = userdto.UserResp{
 		ID:           resRepo.ID,
 		Nama:         resRepo.Nama,
@@ -56,8 +71,15 @@ func (ar *UserUseCaseImpl) MyProfile(ctx context.Context, UserID string) (res us
 		Tentang:      resRepo.Tentang,
 		Perkerjaan:   resRepo.Perkerjaan,
 		Email:        resRepo.Email,
-		IDProvinsi:   resRepo.IDProvinsi,
-		IDKota:       resRepo.IDKota,
+		IDProvinsi: dao.Province{
+			ID:   resProvince.ID,
+			Name: resProvince.Name,
+		},
+		IDKota: dao.City{
+			ID:         resCity.ID,
+			ProvinceID: resCity.ProvinceID,
+			Name:       resCity.Name,
+		},
 	}
 
 	log.Println("Get My Profile Succeed")

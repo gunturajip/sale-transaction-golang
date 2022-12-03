@@ -1,5 +1,7 @@
 package authdto
 
+import "tugas_akhir/internal/dao"
+
 type LoginRequest struct {
 	NoTelp   string `json:"no_telp" validate:"required"`
 	Password string `json:"kata_sandi" validate:"required"`
@@ -18,15 +20,15 @@ type RegisterRequest struct {
 }
 
 type LoginResp struct {
-	Nama         string `json:"nama,omitempty"`
-	NoTelp       string `json:"no_telp,omitempty"`
-	TanggalLahir string `json:"tanggal_Lahir,omitempty"`
-	Tentang      string `json:"tentang,omitempty"`
-	Perkerjaan   string `json:"pekerjaan,omitempty"`
-	Email        string `json:"email,omitempty"`
-	IDProvinsi   string `json:"id_provinsi,omitempty"`
-	IDKota       string `json:"id_kota,omitempty"`
-	Token        string `json:"token,omitempty"`
+	Nama         string       `json:"nama,omitempty"`
+	NoTelp       string       `json:"no_telp,omitempty"`
+	TanggalLahir string       `json:"tanggal_Lahir,omitempty"`
+	Tentang      string       `json:"tentang,omitempty"`
+	Perkerjaan   string       `json:"pekerjaan,omitempty"`
+	Email        string       `json:"email,omitempty"`
+	IDProvinsi   dao.Province `json:"id_provinsi,omitempty"`
+	IDKota       dao.City     `json:"id_kota,omitempty"`
+	Token        string       `json:"token,omitempty"`
 	// Alamat       []Alamat  `json:"alamat"`
 	// Toko         Toko      `gorm:"-"`
 	// Trx          []Trx     `json:"trx"`

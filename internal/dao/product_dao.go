@@ -47,7 +47,7 @@ type ProductTotalPrice struct {
 	LogProductID int `gorm:"-"`
 }
 
-// TableName overrides the table name used by UserResponse to `users`
+// TableName overrides the table name used by ProductTotalPrice to `products`
 func (ProductTotalPrice) TableName() string {
 	return "products"
 }

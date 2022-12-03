@@ -11,6 +11,7 @@ import (
 	"tugas_akhir/internal/helper"
 	authdto "tugas_akhir/internal/pkg/auth/dto"
 	authrepository "tugas_akhir/internal/pkg/auth/repository"
+	provincecityrepository "tugas_akhir/internal/pkg/provincecity/repository"
 	tokorepository "tugas_akhir/internal/pkg/toko/repository"
 
 	"tugas_akhir/internal/utils"
@@ -26,16 +27,18 @@ type AuthUseCase interface {
 }
 
 type AuthUseCaseImpl struct {
-	authrepository authrepository.AuthRepository
-	tokorepository tokorepository.TokoRepository
-	db             *gorm.DB
+	authrepository         authrepository.AuthRepository
+	tokorepository         tokorepository.TokoRepository
+	provincecityrepository provincecityrepository.ProviceCityRepository
+	db                     *gorm.DB
 }
 
-func NewAuthUseCase(authrepository authrepository.AuthRepository, tokorepository tokorepository.TokoRepository, db *gorm.DB) AuthUseCase {
+func NewAuthUseCase(authrepository authrepository.AuthRepository, tokorepository tokorepository.TokoRepository, provincecityrepository provincecityrepository.ProviceCityRepository, db *gorm.DB) AuthUseCase {
 	return &AuthUseCaseImpl{
-		authrepository: authrepository,
-		tokorepository: tokorepository,
-		db:             db,
+		authrepository:         authrepository,
+		tokorepository:         tokorepository,
+		provincecityrepository: provincecityrepository,
+		db:                     db,
 	}
 
 }
@@ -80,6 +83,18 @@ func (ar *AuthUseCaseImpl) LoginUC(ctx context.Context, data authdto.LoginReques
 		}
 	}
 
+	// GET DATA PROVINCE
+	resProvince, errProvince := ar.provincecityrepository.GetDetailProvince(resRepo.IDProvinsi)
+	if err != nil {
+		log.Println("get province", errProvince)
+	}
+
+	// GET DATA CITY
+	resCity, errCity := ar.provincecityrepository.GetDetailCity(resRepo.IDKota)
+	if err != nil {
+		log.Println("err get city", errCity)
+	}
+
 	res = authdto.LoginResp{
 		Nama:         resRepo.Nama,
 		NoTelp:       resRepo.Nama,
@@ -87,9 +102,16 @@ func (ar *AuthUseCaseImpl) LoginUC(ctx context.Context, data authdto.LoginReques
 		Tentang:      resRepo.Nama,
 		Perkerjaan:   resRepo.Nama,
 		Email:        resRepo.Nama,
-		IDProvinsi:   resRepo.Nama,
-		IDKota:       resRepo.Nama,
-		Token:        token,
+		IDProvinsi: dao.Province{
+			ID:   resProvince.ID,
+			Name: resProvince.Name,
+		},
+		IDKota: dao.City{
+			ID:         resCity.ID,
+			ProvinceID: resCity.ProvinceID,
+			Name:       resCity.Name,
+		},
+		Token: token,
 	}
 
 	return res, err
