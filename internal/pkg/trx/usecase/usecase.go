@@ -11,16 +11,22 @@ import (
 	"tugas_akhir/internal/helper"
 	alamatrepository "tugas_akhir/internal/pkg/alamat/repository"
 	productrepository "tugas_akhir/internal/pkg/product/repository"
-	trxdto "tugas_akhir/internal/pkg/trx/dto"
 	trxrepository "tugas_akhir/internal/pkg/trx/repository"
+
+	alamatdto "tugas_akhir/internal/pkg/alamat/dto"
+	categorydto "tugas_akhir/internal/pkg/category/dto"
+	productdto "tugas_akhir/internal/pkg/product/dto"
+	tokodto "tugas_akhir/internal/pkg/toko/dto"
+
+	trxdto "tugas_akhir/internal/pkg/trx/dto"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
 type TrxUseCase interface {
-	GetAllTrxs(ctx context.Context, filter trxdto.TrxFilter) (res trxdto.TrxPagination, err *helper.ErrorStruct)
-	GetTrxByID(ctx context.Context, trxid string) (res []trxdto.TrxRes, err *helper.ErrorStruct)
+	GetAllTrxs(ctx context.Context, userid string, filter trxdto.TrxFilter) (resultResp trxdto.TrxPagination, err *helper.ErrorStruct)
+	GetTrxByID(ctx context.Context, trxid, userid string) (res trxdto.TrxResp, err *helper.ErrorStruct)
 	CreateTrx(ctx context.Context, userid string, data trxdto.TrxReq) (res interface{}, err *helper.ErrorStruct)
 }
 
@@ -41,17 +47,20 @@ func NewTrxUseCase(trxrepository trxrepository.TrxRepository, productrepository 
 
 }
 
-func (tu *TrxUseCaseImpl) GetAllTrxs(ctx context.Context, filter trxdto.TrxFilter) (res trxdto.TrxPagination, err *helper.ErrorStruct) {
+func (tu *TrxUseCaseImpl) GetAllTrxs(ctx context.Context, userid string, filter trxdto.TrxFilter) (resultResp trxdto.TrxPagination, err *helper.ErrorStruct) {
+	// var resultResp trxdto.TrxPagination
+
 	if filter.Limit == 0 {
 		filter.Limit = 10
 	}
+
 	if filter.Page == 0 {
 		filter.Page = 1
 	}
 
-	_, errRepo := tu.trxrepository.GetAllTrxs(ctx, filter)
+	resRepo, errRepo := tu.trxrepository.GetAllTrxs(ctx, userid, filter)
 	if errors.Is(errRepo, gorm.ErrRecordNotFound) {
-		return res, &helper.ErrorStruct{
+		return resultResp, &helper.ErrorStruct{
 			Code: fiber.StatusNotFound,
 			Err:  errors.New("No Data Trx"),
 		}
@@ -59,51 +68,74 @@ func (tu *TrxUseCaseImpl) GetAllTrxs(ctx context.Context, filter trxdto.TrxFilte
 
 	if errRepo != nil {
 		log.Println(errRepo)
-		return res, &helper.ErrorStruct{
+		return resultResp, &helper.ErrorStruct{
 			Code: fiber.StatusBadRequest,
 			Err:  errRepo,
 		}
 	}
 
-	// for _, v := range resRepo {
-	// 	result := trxdto.TrxResp{
-	// 		ID:            v.ID,
-	// 		NamaProduk:    v.NamaProduk,
-	// 		Slug:          v.Slug,
-	// 		HargaReseler:  v.HargaReseler,
-	// 		HargaKonsumen: v.HargaKonsumen,
-	// 		Stok:          v.Stok,
-	// 		Deskripsi:     v.Deskripsi,
-	// 		Toko: tokodto.TokoResp{
-	// 			ID:       v.TokoID,
-	// 			NamaToko: v.Toko.NamaToko,
-	// 			UrlFoto:  v.Toko.UrlFoto,
-	// 		},
-	// 		Category: categorydto.CategoryResp{
-	// 			ID:           v.Category.ID,
-	// 			NamaKategori: v.Category.NamaKategori,
-	// 		},
-	// 	}
+	for _, v := range resRepo {
+		result := trxdto.TrxResp{
+			ID:          v.ID,
+			HargaTotal:  v.HargaTotal,
+			KodeInvoice: v.KodeInvoice,
+			MethodBayar: v.MethodBayar,
+			Alamat: alamatdto.AlamatResp{
+				ID:           v.ID,
+				JudulAlamat:  v.Alamat.JudulAlamat,
+				NamaPenerima: v.Alamat.NamaPenerima,
+				NoTelp:       v.Alamat.NoTelp,
+				DetailAlamat: v.Alamat.DetailAlamat,
+			},
+		}
 
-	// 	for _, photo := range v.Photos {
-	// 		result.Photos = append(result.Photos, trxdto.TrxPhotos{
-	// 			ID:    photo.ID,
-	// 			TrxID: photo.TrxID,
-	// 			Url:   photo.Url,
-	// 		})
-	// 	}
+		// LOOPING DETAIL TRX
+		for _, detail := range v.DetailTrx {
+			dataDetail := trxdto.DetailTrxRes{
+				LogProduct: productdto.ProductResp{
+					ID:            detail.LogProduct.ID,
+					NamaProduk:    detail.LogProduct.NamaProduk,
+					Slug:          detail.LogProduct.Slug,
+					HargaReseler:  detail.LogProduct.HargaReseler,
+					HargaKonsumen: detail.LogProduct.HargaKonsumen,
+					Deskripsi:     detail.LogProduct.NamaProduk,
+					Category: categorydto.CategoryResp{
+						ID:           detail.LogProduct.Category.ID,
+						NamaKategori: detail.LogProduct.Category.NamaKategori,
+					},
+				},
+				Toko: tokodto.TokoResp{
+					ID:       detail.Toko.ID,
+					NamaToko: detail.Toko.NamaToko,
+					UrlFoto:  detail.Toko.UrlFoto,
+				},
+				Kuantitas: detail.Kuantitas,
+				HagaTotal: detail.HagaTotal,
+			}
 
-	// 	res.Data = append(res.Data, result)
-	// }
+			// LOOPING PHOTOS
+			for _, photo := range detail.LogProduct.Photos {
+				dataDetail.LogProduct.Photos = append(dataDetail.LogProduct.Photos, productdto.ProductPhotos{
+					ID:        photo.ID,
+					ProductID: photo.ProductID,
+					Url:       photo.Url,
+				})
+			}
 
-	res.Limit = filter.Limit
-	res.Page = filter.Page
+			result.DetailTrx = append(result.DetailTrx, dataDetail)
+		}
 
-	return res, nil
+		resultResp.Data = append(resultResp.Data, result)
+	}
+
+	resultResp.Limit = filter.Limit
+	resultResp.Page = filter.Page
+
+	return resultResp, nil
 }
 
-func (tu *TrxUseCaseImpl) GetTrxByID(ctx context.Context, trxid string) (res []trxdto.TrxRes, err *helper.ErrorStruct) {
-	_, errRepo := tu.trxrepository.GetTrxByID(ctx, trxid)
+func (tu *TrxUseCaseImpl) GetTrxByID(ctx context.Context, trxid, userid string) (res trxdto.TrxResp, err *helper.ErrorStruct) {
+	resRepo, errRepo := tu.trxrepository.GetTrxByID(ctx, userid, trxid)
 	if errors.Is(errRepo, gorm.ErrRecordNotFound) {
 		return res, &helper.ErrorStruct{
 			Code: fiber.StatusNotFound,
@@ -119,34 +151,57 @@ func (tu *TrxUseCaseImpl) GetTrxByID(ctx context.Context, trxid string) (res []t
 		}
 	}
 
-	// res = trxdto.TrxResp{
-	// 	ID:            resRepo.ID,
-	// 	NamaProduk:    resRepo.NamaProduk,
-	// 	Slug:          resRepo.Slug,
-	// 	HargaReseler:  resRepo.HargaReseler,
-	// 	HargaKonsumen: resRepo.HargaKonsumen,
-	// 	Stok:          resRepo.Stok,
-	// 	Deskripsi:     resRepo.Deskripsi,
-	// 	Toko: tokodto.TokoResp{
-	// 		ID:       resRepo.TokoID,
-	// 		NamaToko: resRepo.Toko.NamaToko,
-	// 		UrlFoto:  resRepo.Toko.UrlFoto,
-	// 	},
-	// 	Category: categorydto.CategoryResp{
-	// 		ID:           resRepo.Category.ID,
-	// 		NamaKategori: resRepo.Category.NamaKategori,
-	// 	},
-	// }
+	result := trxdto.TrxResp{
+		ID:          resRepo.ID,
+		HargaTotal:  resRepo.HargaTotal,
+		KodeInvoice: resRepo.KodeInvoice,
+		MethodBayar: resRepo.MethodBayar,
+		Alamat: alamatdto.AlamatResp{
+			ID:           resRepo.ID,
+			JudulAlamat:  resRepo.Alamat.JudulAlamat,
+			NamaPenerima: resRepo.Alamat.NamaPenerima,
+			NoTelp:       resRepo.Alamat.NoTelp,
+			DetailAlamat: resRepo.Alamat.DetailAlamat,
+		},
+	}
 
-	// for _, photo := range resRepo.Photos {
-	// 	res.Photos = append(res.Photos, trxdto.TrxPhotos{
-	// 		ID:    photo.ID,
-	// 		TrxID: photo.TrxID,
-	// 		Url:   photo.Url,
-	// 	})
-	// }
+	// LOOPING DETAIL TRX
+	for _, detail := range resRepo.DetailTrx {
+		dataDetail := trxdto.DetailTrxRes{
+			LogProduct: productdto.ProductResp{
+				ID:            detail.LogProduct.ID,
+				NamaProduk:    detail.LogProduct.NamaProduk,
+				Slug:          detail.LogProduct.Slug,
+				HargaReseler:  detail.LogProduct.HargaReseler,
+				HargaKonsumen: detail.LogProduct.HargaKonsumen,
+				Deskripsi:     detail.LogProduct.NamaProduk,
+				Category: categorydto.CategoryResp{
+					ID:           detail.LogProduct.Category.ID,
+					NamaKategori: detail.LogProduct.Category.NamaKategori,
+				},
+			},
+			Toko: tokodto.TokoResp{
+				ID:       detail.Toko.ID,
+				NamaToko: detail.Toko.NamaToko,
+				UrlFoto:  detail.Toko.UrlFoto,
+			},
+			Kuantitas: detail.Kuantitas,
+			HagaTotal: detail.HagaTotal,
+		}
 
-	return res, nil
+		// LOOPING PHOTOS
+		for _, photo := range detail.LogProduct.Photos {
+			dataDetail.LogProduct.Photos = append(dataDetail.LogProduct.Photos, productdto.ProductPhotos{
+				ID:        photo.ID,
+				ProductID: photo.ProductID,
+				Url:       photo.Url,
+			})
+		}
+
+		result.DetailTrx = append(result.DetailTrx, dataDetail)
+	}
+
+	return result, nil
 }
 
 func (tu *TrxUseCaseImpl) CreateTrx(ctx context.Context, userid string, data trxdto.TrxReq) (res interface{}, err *helper.ErrorStruct) {

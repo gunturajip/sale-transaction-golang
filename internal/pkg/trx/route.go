@@ -23,7 +23,7 @@ func TrxRoute(r fiber.Router, containerConf *container.Container) {
 	usecase := trxusecase.NewTrxUseCase(repo, productRepo, alamattRepo, containerConf.Mysqldb)
 	controller := trxcontroller.NewTrxController(usecase)
 
-	r.Get("", utils.MiddlewareAuth, controller.CreateTrx)
-	r.Get("/:id_trx", utils.MiddlewareAuth, controller.GetAllTrxs)
+	r.Get("", utils.MiddlewareAuth, controller.GetAllTrxs)
+	r.Get("/:id_trx", utils.MiddlewareAuth, controller.GetTrxByID)
 	r.Post("", utils.MiddlewareAuth, controller.CreateTrx)
 }

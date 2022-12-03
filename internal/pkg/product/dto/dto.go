@@ -50,10 +50,10 @@ type ProductResp struct {
 	Slug          string                   `json:"slug"`
 	HargaReseler  int                      `json:"harga_reseler"`
 	HargaKonsumen int                      `json:"harga_konsumen"`
-	Stok          int                      `json:"stok"`
-	Deskripsi     string                   `json:"deskripsi" gorm:"type:text"`
-	Toko          tokodto.TokoResp         `json:"toko"`     // foreign key
-	Category      categorydto.CategoryResp `json:"category"` // foreign key
+	Stok          int                      `json:"stok,omitempty"`
+	Deskripsi     string                   `json:"deskripsi"`
+	Toko          tokodto.TokoResp         `json:"toko,omitempty"` // foreign key
+	Category      categorydto.CategoryResp `json:"category"`       // foreign key
 	Photos        []ProductPhotos          `json:"photos"`
 }
 

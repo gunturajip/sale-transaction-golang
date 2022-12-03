@@ -21,16 +21,17 @@ type Product struct {
 
 type LogProduct struct {
 	gorm.Model
-	ProductID     uint      `json:"product_id" gorm:"not null"`
-	NamaProduk    string    `json:"nama_produk"`
-	Slug          string    `json:"slug"`
-	HargaReseler  int       `json:"harga_reseller"`
-	HargaKonsumen int       `json:"harga_konsumen"`
-	Deskripsi     string    `json:"deskripsi" gorm:"type:text"`
-	TokoID        uint      `json:"toko_id" gorm:"not null"`
-	Toko          *Toko     `json:"toko"` // foreign key
-	CategoryID    uint      `json:"category_id" gorm:"not null"`
-	Category      *Category `json:"category"` // foreign key
+	ProductID     uint             `json:"product_id" gorm:"not null"`
+	NamaProduk    string           `json:"nama_produk"`
+	Slug          string           `json:"slug"`
+	HargaReseler  int              `json:"harga_reseller"`
+	HargaKonsumen int              `json:"harga_konsumen"`
+	Deskripsi     string           `json:"deskripsi" gorm:"type:text"`
+	TokoID        uint             `json:"toko_id" gorm:"not null"`
+	Toko          *Toko            `json:"toko"` // foreign key
+	CategoryID    uint             `json:"category_id" gorm:"not null"`
+	Category      *Category        `json:"category"` // foreign key
+	Photos        []*ProductPhotos `json:"photos" gorm:"foreignKey:ProductID;references:ProductID"`
 }
 
 type ProductPhotos struct {

@@ -7,7 +7,7 @@ type TokoFilterRequest struct {
 }
 
 type TokoResp struct {
-	ID       uint   `json:"id"`
+	ID       uint   `json:"id,omitempty"`
 	NamaToko string `json:"nama_toko"`
 	UrlFoto  string `json:"url_foto"`
 	UserID   uint   `json:"user_id,omitempty"`

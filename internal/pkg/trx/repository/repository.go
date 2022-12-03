@@ -9,8 +9,8 @@ import (
 )
 
 type TrxRepository interface {
-	GetAllTrxs(ctx context.Context, filter trxdto.TrxFilter) (res []dao.Trx, err error)
-	GetTrxByID(ctx context.Context, trxid string) (res dao.Trx, err error)
+	GetAllTrxs(ctx context.Context, userid string, filter trxdto.TrxFilter) (res []dao.Trx, err error)
+	GetTrxByID(ctx context.Context, userid, trxid string) (res dao.Trx, err error)
 	CreateTrx(ctx context.Context, tx *gorm.DB, data dao.Trx) (res uint, err error)
 }
 
@@ -25,19 +25,20 @@ func NewTrxRepository(db *gorm.DB) TrxRepository {
 }
 
 // TODO
-func (tr *TrxRepositoryImpl) GetAllTrxs(ctx context.Context, filter trxdto.TrxFilter) (res []dao.Trx, err error) {
+func (tr *TrxRepositoryImpl) GetAllTrxs(ctx context.Context, userid string, filter trxdto.TrxFilter) (res []dao.Trx, err error) {
 	offset := (filter.Page - 1) * filter.Limit
 
-	if err := tr.db.Debug().Preload("User").Preload("Alamat").Preload("DetailTrx").WithContext(ctx).Limit(filter.Limit).Offset(offset).Find(&res).Error; err != nil {
+	if err := tr.db.Debug().Preload("User").Preload("Alamat").Preload("DetailTrx.Toko").Preload("DetailTrx.LogProduct.Photos").Preload("DetailTrx.LogProduct.Category").Where("user_id = ? ", userid).Limit(filter.Limit).Offset(offset).Find(&res).WithContext(ctx).Error; err != nil {
 		return res, err
 	}
 	return res, nil
 }
 
-func (tr *TrxRepositoryImpl) GetTrxByID(ctx context.Context, trxid string) (res dao.Trx, err error) {
-	if err := tr.db.Debug().Preload("User").Preload("Alamat").Preload("DetailTrx").First(&res, trxid).WithContext(ctx).Error; err != nil {
+func (tr *TrxRepositoryImpl) GetTrxByID(ctx context.Context, userid, trxid string) (res dao.Trx, err error) {
+	if err := tr.db.Debug().Preload("User").Preload("Alamat").Preload("DetailTrx.Toko").Preload("DetailTrx.LogProduct.Photos").Preload("DetailTrx.LogProduct.Category").Where("user_id = ? AND id = ?", userid, trxid).First(&res).WithContext(ctx).Error; err != nil {
 		return res, err
 	}
+
 	return res, nil
 }
 

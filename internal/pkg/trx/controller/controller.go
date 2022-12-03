@@ -30,7 +30,7 @@ func (uc *TrxControllerImpl) GetAllTrxs(ctx *fiber.Ctx) error {
 	userid := ctx.Locals("userid")
 	useridStr := userid.(string)
 	if useridStr == "" {
-		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, "UNAUTHORIZED", nil, fiber.StatusUnauthorized)
+		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "UNAUTHORIZED", nil, fiber.StatusUnauthorized)
 	}
 
 	filter := new(trxdto.TrxFilter)
@@ -39,7 +39,7 @@ func (uc *TrxControllerImpl) GetAllTrxs(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Error(), nil, fiber.StatusBadRequest)
 	}
 
-	res, err := uc.trxusecase.GetAllTrxs(c, *filter)
+	res, err := uc.trxusecase.GetAllTrxs(c, useridStr, *filter)
 	if err != nil {
 		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
 	}
@@ -60,7 +60,7 @@ func (uc *TrxControllerImpl) GetTrxByID(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "PARAM REQUIRED", nil, fiber.StatusBadRequest)
 	}
 
-	res, err := uc.trxusecase.GetTrxByID(c, trxid)
+	res, err := uc.trxusecase.GetTrxByID(c, trxid, useridStr)
 	if err != nil {
 		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
 	}
